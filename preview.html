@@ -32,13 +32,16 @@
   <div id="events-table">Lade Events...</div>
 
   <script>
-    fetch("https://lswebsitecalendar.vercel.app/api/events")
-      .then(res => res.json())
-      .then(events => {
-        if (!Array.isArray(events) || events.length === 0) {
-          document.getElementById("events-table").innerText = "Keine Events gefunden.";
-          return;
-        }
+    <script>
+  console.log("🎯 preview.html geladen");
+  fetch("https://lswebsitecalendar.vercel.app/api/events")
+    .then(res => {
+      console.log("📡 Antwort erhalten", res);
+      return res.json();
+    })
+    .then(events => {
+      console.log("📦 Events:", events);
+
 
         const table = document.createElement("table");
         const thead = document.createElement("thead");
