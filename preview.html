@@ -32,16 +32,20 @@
   <div id="events-table">Lade Events...</div>
 
   <script>
-    <script>
-  console.log("🎯 preview.html geladen");
-  fetch("https://lswebsitecalendar.vercel.app/api/events")
-    .then(res => {
-      console.log("📡 Antwort erhalten", res);
-      return res.json();
-    })
-    .then(events => {
-      console.log("📦 Events:", events);
+    console.log("🔍 preview.html gestartet");
 
+    fetch("https://lswebsitecalendar.vercel.app/api/events")
+      .then(res => {
+        console.log("📡 API-Antwort erhalten");
+        return res.json();
+      })
+      .then(events => {
+        console.log("📦 Events:", events);
+
+        if (!Array.isArray(events) || events.length === 0) {
+          document.getElementById("events-table").innerText = "Keine Events gefunden.";
+          return;
+        }
 
         const table = document.createElement("table");
         const thead = document.createElement("thead");
@@ -56,6 +60,7 @@
         table.appendChild(thead);
 
         const tbody = document.createElement("tbody");
+
         events.forEach(e => {
           let type = e.type || '';
           let ticket = e.ticket || '';
@@ -79,12 +84,11 @@
         });
 
         table.appendChild(tbody);
-        const target = document.getElementById("events-table");
-        target.innerHTML = "";
-        target.appendChild(table);
+        document.getElementById("events-table").innerHTML = "";
+        document.getElementById("events-table").appendChild(table);
       })
       .catch(err => {
-        console.error("Fehler beim Laden der Events:", err);
+        console.error("❌ Fehler beim Laden der Events:", err);
         document.getElementById("events-table").innerText = "Fehler beim Laden der Events.";
       });
   </script>
