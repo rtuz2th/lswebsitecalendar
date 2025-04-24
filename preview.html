@@ -8,21 +8,9 @@
   <style>
     body {
       margin: 0;
-      padding: 2rem;
+      padding: 0;
       font-family: 'Montserrat', sans-serif;
-      display: flex;
-      justify-content: center;
       background: transparent;
-    }
-
-    .glass-container {
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      background-color: rgba(0, 0, 0, 0.4);
-      border-radius: 20px;
-      padding: 2rem;
-      width: 100%;
-      max-width: 1000px;
       color: #e2cb8c;
     }
 
@@ -37,7 +25,7 @@
       border-collapse: collapse;
       font-size: 16px;
       line-height: 1.6;
-      background: transparent;
+      background: none;
     }
 
     th, td {
@@ -58,10 +46,8 @@
   </style>
 </head>
 <body>
-  <div class="glass-container">
-    <h2>Bevorstehende Events</h2>
-    <div id="events-table">Lade Events...</div>
-  </div>
+  <h2>Bevorstehende Events</h2>
+  <div id="events-table">Lade Events...</div>
 
   <script>
     fetch("https://lswebsitecalendar.vercel.app/api/events")
