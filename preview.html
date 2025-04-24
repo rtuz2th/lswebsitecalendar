@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -66,18 +67,17 @@
           let ticket = e.ticket || '';
           let desc = e.description || '';
 
-          const brLines = desc.split(/<br\\s*\\/?>/i);
+          const brLines = desc.split(/<br\s*\/?>/i);
           brLines.forEach(line => {
             if (line.toLowerCase().includes("typ:")) type = line.replace(/Typ:/i, '').trim();
             if (line.toLowerCase().includes("ticket:")) ticket = line.replace(/Ticket:/i, '').trim();
           });
 
-          const row = document.createElement("tr");
-
           const ticketHTML = ticket
             ? '<a href="' + ticket + '" target="_blank" style="color: #e2cb8c;">Ticket</a>'
             : '-';
 
+          const row = document.createElement("tr");
           row.innerHTML = `
             <td>${new Date(e.start).toLocaleString('de-DE')}</td>
             <td>${e.title}</td>
