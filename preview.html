@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>LifeSpark Events</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
@@ -12,27 +12,31 @@
       font-family: 'Montserrat', sans-serif;
       background: transparent;
       color: #e2cb8c;
-    }
-
-    h2 {
-      font-size: 1.8rem;
-      margin-bottom: 1.5rem;
-      color: #e2cb8c;
+      font-size: 14px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 16px;
-      line-height: 1.6;
       background: none;
     }
 
-    th, td {
-      padding: 12px;
+    th {
+      padding: 14px 12px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       text-align: left;
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       vertical-align: top;
+      font-weight: 300;
+      font-size: 0.875rem;
     }
 
     tr:hover {
@@ -42,11 +46,11 @@
     a {
       color: #e2cb8c;
       text-decoration: underline;
+      font-weight: 400;
     }
   </style>
 </head>
 <body>
-  <h2>Bevorstehende Events</h2>
   <div id="events-table">Lade Events...</div>
 
   <script>
