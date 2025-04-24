@@ -12,31 +12,36 @@
       font-family: 'Montserrat', sans-serif;
       background: transparent;
       color: #e2cb8c;
-      font-size: 14px;
+      font-size: 1.33rem;
+      line-height: 1.8;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 768px;
+      margin: 0 auto;
+      padding: 0 2rem;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       background: none;
+      margin-top: 1rem;
     }
 
     th {
-      padding: 14px 12px;
+      padding: 16px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      text-align: left;
       font-weight: 600;
-      font-size: 0.875rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
 
     td {
-      padding: 12px;
+      padding: 16px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      vertical-align: top;
-      font-weight: 300;
-      font-size: 0.875rem;
+      font-weight: 400;
     }
 
     tr:hover {
@@ -51,7 +56,9 @@
   </style>
 </head>
 <body>
-  <div id="events-table">Lade Events...</div>
+  <div class="container">
+    <div id="events-table">Lade Events...</div>
+  </div>
 
   <script>
     fetch("https://lswebsitecalendar.vercel.app/api/events")
@@ -67,10 +74,9 @@
         thead.innerHTML = `
           <tr>
             <th>Datum</th>
-            <th>Titel</th>
-            <th>Typ</th>
-            <th>Beschreibung</th>
-            <th>Ticket</th>
+            <th>Location</th>
+            <th>Type</th>
+            <th>Tickets</th>
           </tr>`;
         table.appendChild(thead);
 
@@ -80,6 +86,7 @@
           let type = e.type || '';
           let ticket = '';
           let desc = '';
+          let location = e.location || '';
 
           const brLines = (e.description || '').split(/<br\s*\/?>/i);
           brLines.forEach(line => {
@@ -89,20 +96,21 @@
               ticket = line.replace(/Ticket:/i, '').trim().replace(/<.*?>/g, '');
             } else if (line.toLowerCase().startsWith("beschreibung:")) {
               desc = line.replace(/Beschreibung:/i, '').trim();
+            } else if (line.toLowerCase().startsWith("ort:")) {
+              location = line.replace(/Ort:/i, '').trim();
             }
           });
 
           const validTicketUrl = encodeURI(decodeURI(ticket));
           const ticketHTML = ticket
-            ? '<a href="' + validTicketUrl + '" target="_blank" rel="noopener">Ticket</a>'
+            ? '<a href="' + validTicketUrl + '" target="_blank" rel="noopener">Tickets</a>'
             : 'Nur Abendkasse';
 
           const row = document.createElement("tr");
           row.innerHTML = `
             <td>${new Date(e.start).toLocaleDateString('de-DE')}</td>
-            <td>${e.title || "–"}</td>
+            <td>${location || "–"}</td>
             <td>${type || "–"}</td>
-            <td>${desc || "–"}</td>
             <td>${ticketHTML}</td>
           `;
           tbody.appendChild(row);
