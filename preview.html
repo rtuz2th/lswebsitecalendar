@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>LifeSpark Events</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background: #1a1a1a;
+      color: #e2cb8c;
+      font-family: 'Montserrat', sans-serif;
+      padding: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #444;
+      text-align: left;
+    }
+    tr:hover {
+      background-color: #2a2a2a;
+    }
+  </style>
+</head>
+<body>
+  <h2>Bevorstehende Events</h2>
+  <div id="events-table">Lade Events...</div>
+
+  <script>
+    fetch("https://lswebsitecalendar.vercel.app/api/events")
+      .then(res => res.json())
+      .then(events => {
+        if (!Array.isArray(events) || events.length === 0) {
+          document.getElementById("events-table").innerText = "Keine Events gefunden.";
+          return;
+        }
+
+        const table = document.createElement("table");
+        const thead = document.createElement("thead");
+        thead.innerHTML = `
+          <tr>
+            <th>Datum</th>
+            <th>Titel</th>
+            <th>Typ</th>
+            <th>Beschreibung</th>
+            <th>Ticket</th>
+          </tr>`;
+        table.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
+        events.forEach(e => {
+          let type = e.type || '';
+          let ticket = e.ticket || '';
+          let desc = e.description || '';
+
+          const brLines = desc.split(/<br\\s*\\/?>/i);
+          brLines.forEach(line => {
+            if (line.toLowerCase().includes("typ:")) type = line.replace(/Typ:/i, '').trim();
+            if (line.toLowerCase().includes("ticket:")) ticket = line.replace(/Ticket:/i, '').trim();
+          });
+
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${new Date(e.start).toLocaleString('de-DE')}</td>
+            <td>${e.title}</td>
+            <td>${type || "-"}</td>
+            <td>${desc || "-"}</td>
+            <td>${ticket ? `<a href="${ticket}" target="_blank" style="color: #e2cb8c;">Ticket</a>` : "-"}</td>
+          `;
+          tbody.appendChild(row);
+        });
+
+        table.appendChild(tbody);
+        const target = document.getElementById("events-table");
+        target.innerHTML = "";
+        target.appendChild(table);
+      })
+      .catch(err => {
+        console.error("Fehler beim Laden der Events:", err);
+        document.getElementById("events-table").innerText = "Fehler beim Laden der Events.";
+      });
+  </script>
+</body>
+</html>
