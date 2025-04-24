@@ -78,7 +78,7 @@
           const validTicketUrl = encodeURI(decodeURI(ticket));
           const ticketHTML = ticket
             ? '<a href="' + validTicketUrl + '" target="_blank" rel="noopener">Ticket</a>'
-            : '-';
+            : 'Nur Abendkasse';
 
           const row = document.createElement("tr");
           row.innerHTML = `
