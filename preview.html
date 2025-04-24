@@ -26,6 +26,10 @@
     tr:hover {
       background-color: #2a2a2a;
     }
+    a {
+      color: #e2cb8c;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -33,16 +37,9 @@
   <div id="events-table">Lade Events...</div>
 
   <script>
-    console.log("🔍 preview.html gestartet");
-
     fetch("https://lswebsitecalendar.vercel.app/api/events")
-      .then(res => {
-        console.log("📡 API-Antwort erhalten");
-        return res.json();
-      })
+      .then(res => res.json())
       .then(events => {
-        console.log("📦 Events:", events);
-
         if (!Array.isArray(events) || events.length === 0) {
           document.getElementById("events-table").innerText = "Keine Events gefunden.";
           return;
@@ -65,35 +62,41 @@
         events.forEach(e => {
           let type = e.type || '';
           let ticket = e.ticket || '';
-          let desc = e.description || '';
+          let desc = '';
 
-          const brLines = desc.split(/<br\s*\/?>/i);
+          const brLines = (e.description || '').split(/<br\s*\/?>/i);
           brLines.forEach(line => {
-            if (line.toLowerCase().includes("typ:")) type = line.replace(/Typ:/i, '').trim();
-            if (line.toLowerCase().includes("ticket:")) ticket = line.replace(/Ticket:/i, '').trim();
+            if (line.toLowerCase().startsWith("typ:")) {
+              type = line.replace(/Typ:/i, '').trim();
+            } else if (line.toLowerCase().startsWith("ticket:")) {
+              ticket = line.replace(/Ticket:/i, '').trim();
+            } else if (line.toLowerCase().startsWith("beschreibung:")) {
+              desc = line.replace(/Beschreibung:/i, '').trim();
+            }
           });
 
           const ticketHTML = ticket
-            ? '<a href="' + ticket + '" target="_blank" style="color: #e2cb8c;">Ticket</a>'
+            ? '<a href="' + ticket + '" target="_blank">Ticket</a>'
             : '-';
 
           const row = document.createElement("tr");
           row.innerHTML = `
-            <td>${new Date(e.start).toLocaleString('de-DE')}</td>
-            <td>${e.title}</td>
-            <td>${type || "-"}</td>
-            <td>${desc || "-"}</td>
+            <td>${new Date(e.start).toLocaleDateString('de-DE')}</td>
+            <td>${e.title || "–"}</td>
+            <td>${type || "–"}</td>
+            <td>${desc || "–"}</td>
             <td>${ticketHTML}</td>
           `;
           tbody.appendChild(row);
         });
 
         table.appendChild(tbody);
-        document.getElementById("events-table").innerHTML = "";
-        document.getElementById("events-table").appendChild(table);
+        const target = document.getElementById("events-table");
+        target.innerHTML = "";
+        target.appendChild(table);
       })
       .catch(err => {
-        console.error("❌ Fehler beim Laden der Events:", err);
+        console.error("Fehler beim Laden der Events:", err);
         document.getElementById("events-table").innerText = "Fehler beim Laden der Events.";
       });
   </script>
