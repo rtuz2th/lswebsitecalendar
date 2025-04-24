@@ -73,12 +73,17 @@
           });
 
           const row = document.createElement("tr");
+
+          const ticketHTML = ticket
+            ? '<a href="' + ticket + '" target="_blank" style="color: #e2cb8c;">Ticket</a>'
+            : '-';
+
           row.innerHTML = `
             <td>${new Date(e.start).toLocaleString('de-DE')}</td>
             <td>${e.title}</td>
             <td>${type || "-"}</td>
             <td>${desc || "-"}</td>
-            <td>${ticket ? `<a href="${ticket}" target="_blank" style="color: #e2cb8c;">Ticket</a>` : "-"}</td>
+            <td>${ticketHTML}</td>
           `;
           tbody.appendChild(row);
         });
