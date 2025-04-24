@@ -6,7 +6,7 @@
   <title>LifeSpark Events</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet" />
   <style>
-    body {
+    html, body {
       margin: 0;
       padding: 0;
       font-family: 'Montserrat', sans-serif;
@@ -61,11 +61,17 @@
   </div>
 
   <script>
+    function sendHeightToParent() {
+      const height = document.body.scrollHeight;
+      window.parent.postMessage({ type: 'setHeight', height }, '*');
+    }
+
     fetch("https://lswebsitecalendar.vercel.app/api/events")
       .then(res => res.json())
       .then(events => {
         if (!Array.isArray(events) || events.length === 0) {
           document.getElementById("events-table").innerText = "Keine Events gefunden.";
+          sendHeightToParent();
           return;
         }
 
@@ -120,11 +126,15 @@
         const target = document.getElementById("events-table");
         target.innerHTML = "";
         target.appendChild(table);
+        sendHeightToParent();
       })
       .catch(err => {
         console.error("Fehler beim Laden der Events:", err);
         document.getElementById("events-table").innerText = "Fehler beim Laden der Events.";
+        sendHeightToParent();
       });
+
+    window.addEventListener("load", () => setTimeout(sendHeightToParent, 300));
   </script>
 </body>
 </html>
