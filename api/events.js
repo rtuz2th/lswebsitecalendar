@@ -21,26 +21,19 @@ export default async function handler(req, res) {
         const ticketMatch = description.match(/Ticket:\s*(.*)/i);
         const locationMatch = description.match(/Location:\s*(.*)/i);
 
-        let ticketRaw = ticketMatch ? ticketMatch[1].trim() : '';
-        let ticketText = '';
-        let ticketUrl = '';
+        const ticketRaw = ticketMatch ? ticketMatch[1].trim() : '';
+        const isLink = /^https?:\/\//i.test(ticketRaw);
 
-        if (ticketRaw.startsWith('http')) {
-          ticketUrl = ticketRaw;
-          ticketText = 'Tickets';
-        } else if (ticketRaw) {
-          ticketText = ticketRaw;
-        } else {
-          ticketText = 'Nur Abendkasse';
-        }
+        const ticket = ticketRaw || 'Nur Abendkasse';
+        const ticketUrl = isLink ? ticketRaw : '';
 
         return {
           title: e.summary || '',
           start: e.start,
           description: description,
           type: typeMatch ? typeMatch[1].trim() : '',
-          ticket: ticketText,
-          ticketUrl: ticketUrl,
+          ticket,
+          ticketUrl,
           location: locationMatch ? locationMatch[1].trim() : ''
         };
       });
