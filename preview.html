@@ -123,16 +123,16 @@
 
         events.forEach(e => {
           let type = e.type || '';
-          let ticket = '';
+          let ticket = e.ticket || '';
           let location = e.location || '';
 
           const brLines = (e.description || '').split(/<br\s*\/?>/i);
           brLines.forEach(line => {
-            if (line.toLowerCase().startsWith("typ:")) {
+            if (line.toLowerCase().startsWith("typ:") && !type) {
               type = line.replace(/Typ:/i, '').trim();
-            } else if (line.toLowerCase().startsWith("ticket:")) {
+            } else if (line.toLowerCase().startsWith("ticket:") && !ticket) {
               ticket = line.replace(/Ticket:/i, '').trim().replace(/<.*?>/g, '');
-            } else if (line.toLowerCase().startsWith("location:")) {
+            } else if (line.toLowerCase().startsWith("location:") && !location) {
               location = line.replace(/Location:/i, '').trim();
             }
           });
