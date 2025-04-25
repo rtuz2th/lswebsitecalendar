@@ -132,8 +132,8 @@
               type = line.replace(/Typ:/i, '').trim();
             } else if (line.toLowerCase().startsWith("ticket:")) {
               ticket = line.replace(/Ticket:/i, '').trim().replace(/<.*?>/g, '');
-            } else if (line.toLowerCase().startsWith("ort:")) {
-              location = line.replace(/Ort:/i, '').trim();
+            } else if (line.toLowerCase().startsWith("location:")) {
+              location = line.replace(/Location:/i, '').trim();
             }
           });
 
