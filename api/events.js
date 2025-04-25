@@ -21,12 +21,22 @@ export default async function handler(req, res) {
         const ticketMatch = description.match(/Ticket:\s*(.*)/i);
         const locationMatch = description.match(/Location:\s*(.*)/i);
 
+        let ticketRaw = ticketMatch ? ticketMatch[1].trim() : '';
+        let ticket;
+        if (!ticketRaw) {
+          ticket = '';
+        } else if (ticketRaw.startsWith('http')) {
+          ticket = ticketRaw;
+        } else {
+          ticket = ticketRaw; // Nur Text
+        }
+
         return {
           title: e.summary || '',
           start: e.start,
           description: description,
           type: typeMatch ? typeMatch[1].trim() : '',
-          ticket: ticketMatch ? ticketMatch[1].trim() : '',
+          ticket: ticket,
           location: locationMatch ? locationMatch[1].trim() : ''
         };
       });
