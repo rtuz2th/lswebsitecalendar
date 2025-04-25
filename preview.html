@@ -51,6 +51,8 @@
     th {
       text-transform: uppercase;
       font-weight: 600;
+      border-bottom: 2px solid #e2cb8c;
+      white-space: nowrap;
     }
 
     tr:hover {
@@ -78,6 +80,10 @@
 
       .container {
         padding: 0 0.5rem;
+      }
+
+      th {
+        font-size: 0.875rem;
       }
     }
   </style>
@@ -109,7 +115,7 @@
             <th class="nowrap">Datum</th>
             <th class="nowrap">Location</th>
             <th class="nowrap">Type</th>
-            <th>Tickets</th>
+            <th class="nowrap">Tickets</th>
           </tr>`;
         table.appendChild(thead);
 
