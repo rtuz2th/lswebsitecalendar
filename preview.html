@@ -9,49 +9,56 @@
     html, body {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
       font-family: 'Montserrat', sans-serif;
       background: transparent;
       color: #e2cb8c;
-      font-size: 1.33rem;
-      line-height: 1.8;
+      font-size: 1.1rem;
+      line-height: 1.6;
       text-align: center;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    *, *::before, *::after {
+      box-sizing: inherit;
     }
 
     .container {
       max-width: 768px;
       margin: 0 auto;
       padding: 0 2rem;
+      width: 100%;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      background: none;
       margin-top: 1rem;
     }
 
     th {
-      padding: 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      font-weight: 600;
+      padding: 1rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      font-weight: 600;
+      font-size: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     td {
-      padding: 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      font-weight: 400;
+      padding: 1rem;
+      font-weight: 300;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      word-break: break-word;
     }
 
     tr:hover {
-      background-color: rgba(255, 255, 255, 0.05);
+      background-color: rgba(255,255,255,0.05);
     }
 
     a {
       color: #e2cb8c;
       text-decoration: underline;
-      font-weight: 400;
     }
   </style>
 </head>
@@ -91,7 +98,6 @@
         events.forEach(e => {
           let type = e.type || '';
           let ticket = '';
-          let desc = '';
           let location = e.location || '';
 
           const brLines = (e.description || '').split(/<br\s*\/?>/i);
@@ -100,8 +106,6 @@
               type = line.replace(/Typ:/i, '').trim();
             } else if (line.toLowerCase().startsWith("ticket:")) {
               ticket = line.replace(/Ticket:/i, '').trim().replace(/<.*?>/g, '');
-            } else if (line.toLowerCase().startsWith("beschreibung:")) {
-              desc = line.replace(/Beschreibung:/i, '').trim();
             } else if (line.toLowerCase().startsWith("ort:")) {
               location = line.replace(/Ort:/i, '').trim();
             }
