@@ -22,13 +22,16 @@ export default async function handler(req, res) {
         const locationMatch = description.match(/Location:\s*(.*)/i);
 
         let ticketRaw = ticketMatch ? ticketMatch[1].trim() : '';
-        let ticket;
-        if (!ticketRaw) {
-          ticket = '';
-        } else if (ticketRaw.startsWith('http')) {
-          ticket = ticketRaw;
+        let ticketText = '';
+        let ticketUrl = '';
+
+        if (ticketRaw.startsWith('http')) {
+          ticketUrl = ticketRaw;
+          ticketText = 'Tickets';
+        } else if (ticketRaw) {
+          ticketText = ticketRaw;
         } else {
-          ticket = ticketRaw; // Nur Text
+          ticketText = 'Nur Abendkasse';
         }
 
         return {
@@ -36,7 +39,8 @@ export default async function handler(req, res) {
           start: e.start,
           description: description,
           type: typeMatch ? typeMatch[1].trim() : '',
-          ticket: ticket,
+          ticket: ticketText,
+          ticketUrl: ticketUrl,
           location: locationMatch ? locationMatch[1].trim() : ''
         };
       });
