@@ -1,50 +1,40 @@
-// File: api/events.js (for Vercel serverless function)
-
 import ical from 'node-ical';
-import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
-  const icsUrl = "https://calendar.google.com/calendar/ical/92f3abbb95e0965e767ecd6e0efdcf3d6f0a4a3c083bfda41d52eed766a13950%40group.calendar.google.com/public/basic.ics";
-
   try {
-    const response = await fetch(icsUrl);
-    if (!response.ok) throw new Error("Kalender konnte nicht geladen werden");
+    const url = 'https://calendar.google.com/calendar/ical/92f3abbb95e0965e767ecd6e0efdcf3d6f0a4a3c083bfda41d52eed766a13950%40group.calendar.google.com/public/basic.ics';
+    const data = await ical.async.fromURL(url);
 
-    const icsText = await response.text();
-    const data = ical.parseICS(icsText);
+    const now = new Date();
+    now.setHours(0, 0, 0, 0); // Vergleich ab heute, unabhängig von Uhrzeit
 
     const events = Object.values(data)
-      .filter(e => e.type === 'VEVENT' && e.start >= new Date())
+      .filter(e => e.type === 'VEVENT')
+      .filter(e => {
+        const eventDate = new Date(e.start);
+        eventDate.setHours(0, 0, 0, 0);
+        return eventDate >= now;
+      })
       .map(e => {
-        // Beschreibung parsen (optional: Typ + Ticket-Link)
-        const details = {
-          description: '',
-          type: '',
-          ticket: ''
-        };
-
-        if (e.description) {
-          const lines = e.description.split(/\r?\n/);
-          lines.forEach(line => {
-            if (line.startsWith("Typ:")) details.type = line.replace("Typ:", "").trim();
-            else if (line.startsWith("Ticket:")) details.ticket = line.replace("Ticket:", "").trim();
-            else details.description += line + ' ';
-          });
-        }
+        const description = e.description || '';
+        const typeMatch = description.match(/Typ:\s*(.*)/i);
+        const ticketMatch = description.match(/Ticket:\s*(.*)/i);
+        const locationMatch = description.match(/Location:\s*(.*)/i);
 
         return {
-          title: e.summary,
+          title: e.summary || '',
           start: e.start,
-          description: details.description.trim(),
-          type: details.type,
-          ticket: details.ticket
+          description: description,
+          type: typeMatch ? typeMatch[1].trim() : '',
+          ticket: ticketMatch ? ticketMatch[1].trim() : '',
+          location: locationMatch ? locationMatch[1].trim() : ''
         };
       });
 
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
     res.status(200).json(events);
-  } catch (err) {
-    console.error("Fehler beim Parsen des Kalenders:", err);
-    res.status(500).json({ error: "Fehler beim Laden der Events" });
+  } catch (error) {
+    console.error('Fehler beim Abrufen des Kalenders:', error);
+    res.status(500).json({ error: 'Interner Serverfehler' });
   }
 }
