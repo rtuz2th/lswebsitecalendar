@@ -102,8 +102,23 @@
     fetch("https://lswebsitecalendar.vercel.app/api/events")
       .then(res => res.json())
       .then(events => {
-        if (!Array.isArray(events) || events.length === 0) {
-          document.getElementById("events-table").innerText = "Keine Events gefunden.";
+        if (!Array.isArray(events)) {
+          document.getElementById("events-table").innerText = "Fehler beim Laden.";
+          sendHeightToParent();
+          return;
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const futureEvents = events.filter(e => {
+          const eventDate = new Date(e.start);
+          eventDate.setHours(0, 0, 0, 0);
+          return eventDate >= today;
+        });
+
+        if (futureEvents.length === 0) {
+          document.getElementById("events-table").innerText = "Keine kommenden Events.";
           sendHeightToParent();
           return;
         }
@@ -121,7 +136,7 @@
 
         const tbody = document.createElement("tbody");
 
-        events.forEach(e => {
+        futureEvents.forEach(e => {
           let type = e.type || '';
           let ticket = e.ticket || '';
           let location = e.location || '';
