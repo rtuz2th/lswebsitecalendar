@@ -1,45 +1,47 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Events</title>
   <style>
-    body {
+    html, body {
       margin: 0;
-      font-family: system-ui, sans-serif;
-      background: #0d0d0d;
-      color: #f0f0f0;
+      padding: 0;
+      background: transparent;
+      font-family: "Satoshi", sans-serif;
+      color: #f5c518;
     }
 
-    #events-container {
-      max-width: 960px;
-      margin: 2rem auto;
+    .events-wrapper {
+      width: 100%;
       padding: 2rem;
+      box-sizing: border-box;
     }
 
     h1 {
       text-align: center;
+      font-size: 3rem;
+      font-weight: 800;
       color: #f5c518;
-      font-size: 2.5rem;
       margin-bottom: 2rem;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      table-layout: auto;
+      color: #f5c518;
+      font-size: 1rem;
     }
 
     th, td {
-      padding: 0.75rem;
+      padding: 0.75rem 0.5rem;
       text-align: left;
-      border-bottom: 1px solid #333;
-      white-space: normal;
-      word-break: break-word;
+      border-bottom: 1px solid #999;
+      vertical-align: top;
     }
 
     th {
-      font-weight: bold;
+      font-weight: 700;
       color: #f5c518;
     }
 
@@ -47,31 +49,47 @@
       color: #f5c518;
       text-decoration: underline;
     }
+
+    @media (max-width: 480px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      thead {
+        display: none;
+      }
+      tr {
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #999;
+      }
+      td {
+        padding: 0.25rem 0;
+      }
+      td::before {
+        content: attr(data-label) ": ";
+        font-weight: bold;
+        display: inline-block;
+        width: 90px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div id="events-container">
+  <div class="events-wrapper">
     <h1>Events</h1>
     <div id="events-table">Lade Events…</div>
   </div>
 
   <script>
     function sendHeightToParent() {
-      const height = document.documentElement.scrollHeight;
-      parent.postMessage({ type: "setHeight", height }, "*");
+      const height = document.body.scrollHeight;
+      window.parent.postMessage({ type: "setHeight", height }, "*");
     }
 
     fetch("/api/events")
       .then(res => res.json())
       .then(events => {
-        if (!Array.isArray(events)) {
-          document.getElementById("events-table").innerText = "Fehler beim Laden.";
-          sendHeightToParent();
-          return;
-        }
-
-        if (events.length === 0) {
-          document.getElementById("events-table").innerText = "Keine kommenden Events.";
+        if (!Array.isArray(events) || events.length === 0) {
+          document.getElementById("events-table").innerText = "Keine Events gefunden.";
           sendHeightToParent();
           return;
         }
@@ -90,25 +108,25 @@
         const tbody = document.createElement("tbody");
 
         events.forEach(e => {
-          const row = document.createElement("tr");
           const date = new Date(e.start).toLocaleDateString("de-DE");
-
           const ticketHTML = e.ticketUrl
-            ? `<a href="${e.ticketUrl}" target="_blank">Tickets</a>`
-            : (e.ticket && e.ticket !== "–" ? e.ticket : "–");
+            ? `<a href="${e.ticketUrl}" target="_blank" rel="noopener">Tickets</a>`
+            : (e.ticket || "–");
 
+          const row = document.createElement("tr");
           row.innerHTML = `
-            <td>${date}</td>
-            <td>${e.location}</td>
-            <td>${e.type}</td>
-            <td>${ticketHTML}</td>`;
+            <td data-label="Date">${date}</td>
+            <td data-label="Location">${e.location}</td>
+            <td data-label="Type">${e.type}</td>
+            <td data-label="Tickets">${ticketHTML}</td>
+          `;
           tbody.appendChild(row);
         });
 
         table.appendChild(tbody);
-        const target = document.getElementById("events-table");
-        target.innerHTML = "";
-        target.appendChild(table);
+        const wrapper = document.getElementById("events-table");
+        wrapper.innerHTML = "";
+        wrapper.appendChild(table);
         sendHeightToParent();
       })
       .catch(err => {
