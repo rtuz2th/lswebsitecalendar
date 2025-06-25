@@ -1,77 +1,123 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Events</title>
+  <meta charset="UTF-8" />
+  <title>LifeSpark Events</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet" />
   <style>
-    body {
+    html, body {
       margin: 0;
-      font-family: system-ui, sans-serif;
-      background: #0d0d0d;
-      color: #f0f0f0;
-    }
-
-    #events-container {
-      max-width: 960px;
-      margin: 2rem auto;
-      padding: 2rem;
-    }
-
-    h1 {
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+      background: transparent;
+      color: #e2cb8c;
+      font-size: 1rem;
+      line-height: 1.6;
       text-align: center;
-      color: #f5c518;
-      font-size: 2.5rem;
-      margin-bottom: 2rem;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    *, *::before, *::after {
+      box-sizing: inherit;
+    }
+
+    .container {
+      max-width: 768px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      width: 100%;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
+      margin-top: 1rem;
       table-layout: auto;
     }
 
     th, td {
       padding: 0.75rem;
+      font-weight: 300;
+      font-size: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
       text-align: left;
-      border-bottom: 1px solid #333;
-      white-space: normal;
       word-break: break-word;
     }
 
     th {
-      font-weight: bold;
-      color: #f5c518;
+      text-transform: uppercase;
+      font-weight: 600;
+      border-bottom: 2px solid #e2cb8c;
+      white-space: nowrap;
+    }
+
+    tr:hover {
+      background-color: rgba(255,255,255,0.05);
     }
 
     a {
-      color: #f5c518;
+      color: #e2cb8c;
       text-decoration: underline;
+    }
+
+    .nowrap {
+      white-space: nowrap;
+    }
+
+    @media (max-width: 600px) {
+      html, body {
+        font-size: 0.875rem;
+      }
+
+      th, td {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+      }
+
+      .container {
+        padding: 0 0.5rem;
+      }
+
+      th {
+        font-size: 0.875rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div id="events-container">
-    <h1>Events</h1>
-    <div id="events-table">Lade Events…</div>
+  <div class="container">
+    <div id="events-table">Loading Events...</div>
   </div>
 
   <script>
     function sendHeightToParent() {
-      const height = document.documentElement.scrollHeight;
-      parent.postMessage({ type: "setHeight", height }, "*");
+      const height = document.body.scrollHeight;
+      window.parent.postMessage({ type: 'setHeight', height }, '*');
     }
 
-    fetch("/api/events")
+    fetch("https://lswebsitecalendar.vercel.app/api/events?forceupdate=1")
       .then(res => res.json())
       .then(events => {
         if (!Array.isArray(events)) {
-          document.getElementById("events-table").innerText = "Fehler beim Laden.";
+          document.getElementById("events-table").innerText = "Error loading events.";
           sendHeightToParent();
           return;
         }
 
-        if (events.length === 0) {
-          document.getElementById("events-table").innerText = "Keine kommenden Events.";
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const futureEvents = events.filter(e => {
+          const eventDate = new Date(e.start);
+          eventDate.setHours(0, 0, 0, 0);
+          return eventDate >= today;
+        });
+
+        if (futureEvents.length === 0) {
+          document.getElementById("events-table").innerText = "No upcoming events.";
           sendHeightToParent();
           return;
         }
@@ -80,28 +126,37 @@
         const thead = document.createElement("thead");
         thead.innerHTML = `
           <tr>
-            <th>Date</th>
-            <th>Location</th>
-            <th>Type</th>
-            <th>Tickets</th>
+            <th class="nowrap">Datum</th>
+            <th class="nowrap">Location</th>
+            <th class="nowrap">Type</th>
+            <th class="nowrap">Tickets</th>
           </tr>`;
         table.appendChild(thead);
 
         const tbody = document.createElement("tbody");
 
-        events.forEach(e => {
+        futureEvents.forEach(e => {
+          const type = e.type || '–';
+          const ticketText = e.ticket || '–';
+          const ticketUrl = e.ticketUrl || '';
+          const location = e.location || '–';
+
+          let ticketHTML = "Nur Abendkasse";
+          if (ticketUrl) {
+            ticketHTML = '<a href="' + ticketUrl + '" target="_blank" rel="noopener">Tickets</a>';
+          } else if (ticketText.trim() !== '' && ticketText !== '–') {
+            ticketHTML = ticketText;
+          } else {
+            ticketHTML = '–';
+          }
+
           const row = document.createElement("tr");
-          const date = new Date(e.start).toLocaleDateString("de-DE");
-
-          const ticketHTML = e.ticketUrl
-            ? `<a href="${e.ticketUrl}" target="_blank">Tickets</a>`
-            : (e.ticket && e.ticket !== "–" ? e.ticket : "–");
-
           row.innerHTML = `
-            <td>${date}</td>
-            <td>${e.location}</td>
-            <td>${e.type}</td>
-            <td>${ticketHTML}</td>`;
+            <td class="nowrap">${new Date(e.start).toLocaleDateString('de-DE')}</td>
+            <td class="nowrap">${location}</td>
+            <td class="nowrap">${type}</td>
+            <td>${ticketHTML}</td>
+          `;
           tbody.appendChild(row);
         });
 
@@ -112,10 +167,12 @@
         sendHeightToParent();
       })
       .catch(err => {
-        console.error("Fehler beim Laden der Events:", err);
-        document.getElementById("events-table").innerText = "Fehler beim Laden der Events.";
+        console.error("Error loading events:", err);
+        document.getElementById("events-table").innerText = "Error loading events.";
         sendHeightToParent();
       });
+
+    window.addEventListener("load", () => setTimeout(sendHeightToParent, 300));
   </script>
 </body>
 </html>
