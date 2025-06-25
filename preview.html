@@ -8,12 +8,13 @@
       margin: 0;
       padding: 0;
       background: transparent;
-      font-family: "Satoshi", sans-serif;
+      font-family: 'Satoshi', sans-serif;
       color: #f5c518;
     }
 
     .events-wrapper {
-      width: 100%;
+      max-width: 768px;
+      margin: 0 auto;
       padding: 2rem;
       box-sizing: border-box;
     }
@@ -22,8 +23,8 @@
       text-align: center;
       font-size: 3rem;
       font-weight: 800;
-      color: #f5c518;
       margin-bottom: 2rem;
+      color: #f5c518;
     }
 
     table {
@@ -31,6 +32,7 @@
       border-collapse: collapse;
       color: #f5c518;
       font-size: 1rem;
+      table-layout: fixed;
     }
 
     th, td {
@@ -38,11 +40,11 @@
       text-align: left;
       border-bottom: 1px solid #999;
       vertical-align: top;
+      word-wrap: break-word;
     }
 
     th {
       font-weight: 700;
-      color: #f5c518;
     }
 
     a {
@@ -50,25 +52,14 @@
       text-decoration: underline;
     }
 
-    @media (max-width: 480px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
+    @media (max-width: 600px) {
+      table {
+        font-size: 0.95rem;
       }
-      thead {
-        display: none;
-      }
-      tr {
-        margin-bottom: 1rem;
-        border-bottom: 1px solid #999;
-      }
-      td {
-        padding: 0.25rem 0;
-      }
-      td::before {
-        content: attr(data-label) ": ";
-        font-weight: bold;
-        display: inline-block;
-        width: 90px;
+
+      th:nth-child(4),
+      td:nth-child(4) {
+        word-break: break-word;
       }
     }
   </style>
@@ -98,9 +89,9 @@
         const thead = document.createElement("thead");
         thead.innerHTML = `
           <tr>
-            <th>Date</th>
+            <th>Datum</th>
             <th>Location</th>
-            <th>Type</th>
+            <th>Typ</th>
             <th>Tickets</th>
           </tr>`;
         table.appendChild(thead);
@@ -115,10 +106,10 @@
 
           const row = document.createElement("tr");
           row.innerHTML = `
-            <td data-label="Date">${date}</td>
-            <td data-label="Location">${e.location}</td>
-            <td data-label="Type">${e.type}</td>
-            <td data-label="Tickets">${ticketHTML}</td>
+            <td>${date}</td>
+            <td>${e.location}</td>
+            <td>${e.type}</td>
+            <td>${ticketHTML}</td>
           `;
           tbody.appendChild(row);
         });
