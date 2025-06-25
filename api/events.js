@@ -2,7 +2,7 @@ import ical from 'node-ical';
 
 export default async function handler(req, res) {
   try {
-    const url = 'https://calendar.google.com/calendar/u/2?cid=OTJmM2FiYmI5NWUwOTY1ZTc2N2VjZDZlMGVmZGNmM2Q2ZjBhNGEzYzA4M2JmZGE0MWQ1MmVlZDc2NmExMzk1MEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t';
+    const url = 'https://calendar.google.com/calendar/ical/92f3abbb95e0965e767ecd6e0efdcf3d6f0a4a3c083bfda41d52eed766a13950%40group.calendar.google.com/public/basic.ics';
     const data = await ical.async.fromURL(url);
 
     const now = new Date();
