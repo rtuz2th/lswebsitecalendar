@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -137,33 +136,24 @@
         const tbody = document.createElement("tbody");
 
         futureEvents.forEach(e => {
-          let type = e.type || '';
-          let ticket = e.ticket || '';
-          let location = e.location || '';
-
-          const brLines = (e.description || '').split(/<br\s*\/?>/i);
-          brLines.forEach(line => {
-            if (line.toLowerCase().startsWith("typ:") && !type) {
-              type = line.replace(/Typ:/i, '').trim();
-            } else if (line.toLowerCase().startsWith("ticket:") && !ticket) {
-              ticket = line.replace(/Ticket:/i, '').trim().replace(/<.*?>/g, '');
-            } else if (line.toLowerCase().startsWith("location:") && !location) {
-              location = line.replace(/Location:/i, '').trim();
-            }
-          });
+          const type = e.type || '–';
+          const ticket = e.ticket || '–';
+          const location = e.location || '–';
 
           let ticketHTML = "Nur Abendkasse";
           if (ticket && /^https?:\/\//i.test(ticket)) {
             ticketHTML = '<a href="' + ticket + '" target="_blank" rel="noopener">Tickets</a>';
-          } else if (ticket && ticket.trim() !== "") {
+          } else if (ticket.trim() !== '' && ticket !== '–') {
             ticketHTML = ticket;
+          } else {
+            ticketHTML = '–';
           }
 
           const row = document.createElement("tr");
           row.innerHTML = `
             <td class="nowrap">${new Date(e.start).toLocaleDateString('de-DE')}</td>
-            <td class="nowrap">${location || "–"}</td>
-            <td class="nowrap">${type || "–"}</td>
+            <td class="nowrap">${location}</td>
+            <td class="nowrap">${type}</td>
             <td>${ticketHTML}</td>
           `;
           tbody.appendChild(row);
