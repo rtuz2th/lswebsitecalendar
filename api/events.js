@@ -17,7 +17,8 @@ export default async function handler(req, res) {
       })
       .map(e => {
         const description = e.description || '';
-        const lines = description.split(/<br\s*\/?>/i);
+
+        const lines = description.split(/<br\s*\/?>|\n/i);
 
         let type = '';
         let ticket = '';
@@ -27,8 +28,8 @@ export default async function handler(req, res) {
           const clean = line.trim();
           if (/^typ:/i.test(clean)) {
             type = clean.replace(/^typ:/i, '').trim();
-          } else if (/^ticket:/i.test(clean)) {
-            ticket = clean.replace(/^ticket:/i, '').trim().replace(/<.*?>/g, ''); // Entfernt HTML
+          } else if (/^tickets?:/i.test(clean)) {
+            ticket = clean.replace(/^tickets?:/i, '').trim();
           } else if (/^location:/i.test(clean)) {
             location = clean.replace(/^location:/i, '').trim();
           }
@@ -46,6 +47,7 @@ export default async function handler(req, res) {
           location: location || '–'
         };
       });
+
 
     res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
     res.status(200).json(events);
