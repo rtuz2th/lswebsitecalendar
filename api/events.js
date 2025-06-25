@@ -18,7 +18,9 @@ export default async function handler(req, res) {
       .map(e => {
         const description = e.description || '';
 
-        const lines = description.split(/<br\s*\/?>|\n/i);
+        // Entferne weiche Zeilenumbrüche (z. B. \n innerhalb von Text)
+        const normalizedDescription = description.replace(/\n\s*/g, ' ');
+        const lines = normalizedDescription.split(/<br\s*\/?>|\n/i);
 
         let type = '';
         let ticket = '';
