@@ -99,7 +99,7 @@
       window.parent.postMessage({ type: 'setHeight', height }, '*');
     }
 
-    fetch("https://lswebsitecalendar.vercel.app/api/events")
+    fetch("https://lswebsitecalendar.vercel.app/api/events?forceupdate=1")
       .then(res => res.json())
       .then(events => {
         if (!Array.isArray(events)) {
