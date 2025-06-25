@@ -13,7 +13,7 @@
       font-family: 'Montserrat', sans-serif;
       background: transparent;
       color: #e2cb8c;
-      font-size: 1rem;
+      font-size: 0.8rem;
       line-height: 1.6;
       text-align: center;
       overflow-x: hidden;
@@ -25,9 +25,9 @@
     }
 
     .container {
-      max-width: 768px;
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 0 1rem;
+      padding: 0 0.5rem;
       width: 100%;
     }
 
@@ -35,23 +35,23 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 1rem;
-      table-layout: auto;
+      table-layout: fixed;
     }
 
     th, td {
-      padding: 0.75rem;
+      padding: 0.5rem;
       font-weight: 300;
-      font-size: 1rem;
+      font-size: 0.8rem;
       border-bottom: 1px solid rgba(255,255,255,0.1);
       text-align: left;
       word-break: break-word;
+      white-space: nowrap;
     }
 
     th {
       text-transform: uppercase;
       font-weight: 600;
       border-bottom: 2px solid #e2cb8c;
-      white-space: nowrap;
     }
 
     tr:hover {
@@ -69,20 +69,20 @@
 
     @media (max-width: 600px) {
       html, body {
-        font-size: 0.875rem;
+        font-size: 0.75rem;
       }
 
       th, td {
-        padding: 0.5rem;
-        font-size: 0.875rem;
+        padding: 0.4rem;
+        font-size: 0.75rem;
       }
 
       .container {
-        padding: 0 0.5rem;
+        padding: 0 0.25rem;
       }
 
       th {
-        font-size: 0.875rem;
+        font-size: 0.75rem;
       }
     }
   </style>
@@ -155,7 +155,7 @@
             <td class="nowrap">${new Date(e.start).toLocaleDateString('de-DE')}</td>
             <td class="nowrap">${location}</td>
             <td class="nowrap">${type}</td>
-            <td>${ticketHTML}</td>
+            <td class="nowrap">${ticketHTML}</td>
           `;
           tbody.appendChild(row);
         });
