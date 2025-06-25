@@ -13,7 +13,7 @@
       font-family: 'Montserrat', sans-serif;
       background: transparent;
       color: #e2cb8c;
-      font-size: 0.8rem;
+      font-size: 1rem;
       line-height: 1.6;
       text-align: center;
       overflow-x: hidden;
@@ -25,10 +25,9 @@
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 95vw;
       margin: 0 auto;
-      padding: 0 0.5rem;
-      width: 100%;
+      padding: 0 0.25rem;
     }
 
     table {
@@ -39,13 +38,14 @@
     }
 
     th, td {
-      padding: 0.5rem;
+      padding: 0.6rem 0.4rem;
       font-weight: 300;
-      font-size: 0.8rem;
+      font-size: 0.95rem;
       border-bottom: 1px solid rgba(255,255,255,0.1);
       text-align: left;
-      word-break: break-word;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     th {
@@ -63,26 +63,24 @@
       text-decoration: underline;
     }
 
-    .nowrap {
-      white-space: nowrap;
-    }
-
     @media (max-width: 600px) {
       html, body {
         font-size: 0.75rem;
       }
 
       th, td {
-        padding: 0.4rem;
+        padding: 0.4rem 0.3rem;
         font-size: 0.75rem;
+      }
+
+      th, td {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
 
       .container {
-        padding: 0 0.25rem;
-      }
-
-      th {
-        font-size: 0.75rem;
+        padding: 0 0.2rem;
       }
     }
   </style>
@@ -113,7 +111,7 @@
         const futureEvents = events.filter(e => {
           const eventDate = new Date(e.start);
           eventDate.setHours(0, 0, 0, 0);
-          return eventDate >= today;
+          return eventDate >= today || eventDate.getTime() === today.getTime() - 86400000;
         });
 
         if (futureEvents.length === 0) {
@@ -126,10 +124,10 @@
         const thead = document.createElement("thead");
         thead.innerHTML = `
           <tr>
-            <th class="nowrap">Datum</th>
-            <th class="nowrap">Location</th>
-            <th class="nowrap">Type</th>
-            <th class="nowrap">Tickets</th>
+            <th>Datum</th>
+            <th>Location</th>
+            <th>Type</th>
+            <th>Tickets</th>
           </tr>`;
         table.appendChild(thead);
 
@@ -152,10 +150,10 @@
 
           const row = document.createElement("tr");
           row.innerHTML = `
-            <td class="nowrap">${new Date(e.start).toLocaleDateString('de-DE')}</td>
-            <td class="nowrap">${location}</td>
-            <td class="nowrap">${type}</td>
-            <td class="nowrap">${ticketHTML}</td>
+            <td>${new Date(e.start).toLocaleDateString('de-DE')}</td>
+            <td>${location}</td>
+            <td>${type}</td>
+            <td>${ticketHTML}</td>
           `;
           tbody.appendChild(row);
         });
