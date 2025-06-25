@@ -1,86 +1,77 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Events</title>
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
-      background: transparent;
-      font-family: 'Satoshi', sans-serif;
-      color: #f5c518;
+      font-family: system-ui, sans-serif;
+      background: #0d0d0d;
+      color: #f0f0f0;
     }
 
-    .events-wrapper {
-      max-width: 768px;
-      margin: 0 auto;
+    #events-container {
+      max-width: 960px;
+      margin: 2rem auto;
       padding: 2rem;
-      box-sizing: border-box;
     }
 
     h1 {
       text-align: center;
-      font-size: 3rem;
-      font-weight: 800;
-      margin-bottom: 2rem;
       color: #f5c518;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      color: #f5c518;
-      font-size: 1rem;
-      table-layout: fixed;
+      table-layout: auto;
     }
 
     th, td {
-      padding: 0.75rem 0.5rem;
+      padding: 0.75rem;
       text-align: left;
-      border-bottom: 1px solid #999;
-      vertical-align: top;
-      word-wrap: break-word;
+      border-bottom: 1px solid #333;
+      white-space: normal;
+      word-break: break-word;
     }
 
     th {
-      font-weight: 700;
+      font-weight: bold;
+      color: #f5c518;
     }
 
     a {
       color: #f5c518;
       text-decoration: underline;
     }
-
-    @media (max-width: 600px) {
-      table {
-        font-size: 0.95rem;
-      }
-
-      th:nth-child(4),
-      td:nth-child(4) {
-        word-break: break-word;
-      }
-    }
   </style>
 </head>
 <body>
-  <div class="events-wrapper">
+  <div id="events-container">
     <h1>Events</h1>
     <div id="events-table">Lade Events…</div>
   </div>
 
   <script>
     function sendHeightToParent() {
-      const height = document.body.scrollHeight;
-      window.parent.postMessage({ type: "setHeight", height }, "*");
+      const height = document.documentElement.scrollHeight;
+      parent.postMessage({ type: "setHeight", height }, "*");
     }
 
     fetch("/api/events")
       .then(res => res.json())
       .then(events => {
-        if (!Array.isArray(events) || events.length === 0) {
-          document.getElementById("events-table").innerText = "Keine Events gefunden.";
+        if (!Array.isArray(events)) {
+          document.getElementById("events-table").innerText = "Fehler beim Laden.";
+          sendHeightToParent();
+          return;
+        }
+
+        if (events.length === 0) {
+          document.getElementById("events-table").innerText = "Keine kommenden Events.";
           sendHeightToParent();
           return;
         }
@@ -89,9 +80,9 @@
         const thead = document.createElement("thead");
         thead.innerHTML = `
           <tr>
-            <th>Datum</th>
+            <th>Date</th>
             <th>Location</th>
-            <th>Typ</th>
+            <th>Type</th>
             <th>Tickets</th>
           </tr>`;
         table.appendChild(thead);
@@ -99,25 +90,25 @@
         const tbody = document.createElement("tbody");
 
         events.forEach(e => {
-          const date = new Date(e.start).toLocaleDateString("de-DE");
-          const ticketHTML = e.ticketUrl
-            ? `<a href="${e.ticketUrl}" target="_blank" rel="noopener">Tickets</a>`
-            : (e.ticket || "–");
-
           const row = document.createElement("tr");
+          const date = new Date(e.start).toLocaleDateString("de-DE");
+
+          const ticketHTML = e.ticketUrl
+            ? `<a href="${e.ticketUrl}" target="_blank">Tickets</a>`
+            : (e.ticket && e.ticket !== "–" ? e.ticket : "–");
+
           row.innerHTML = `
             <td>${date}</td>
             <td>${e.location}</td>
             <td>${e.type}</td>
-            <td>${ticketHTML}</td>
-          `;
+            <td>${ticketHTML}</td>`;
           tbody.appendChild(row);
         });
 
         table.appendChild(tbody);
-        const wrapper = document.getElementById("events-table");
-        wrapper.innerHTML = "";
-        wrapper.appendChild(table);
+        const target = document.getElementById("events-table");
+        target.innerHTML = "";
+        target.appendChild(table);
         sendHeightToParent();
       })
       .catch(err => {
