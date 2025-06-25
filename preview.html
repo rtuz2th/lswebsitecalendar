@@ -90,7 +90,7 @@
 </head>
 <body>
   <div class="container">
-    <div id="events-table">Lade Events...</div>
+    <div id="events-table">Loading Events...</div>
   </div>
 
   <script>
@@ -103,7 +103,7 @@
       .then(res => res.json())
       .then(events => {
         if (!Array.isArray(events)) {
-          document.getElementById("events-table").innerText = "Fehler beim Laden.";
+          document.getElementById("events-table").innerText = "Error loading events.";
           sendHeightToParent();
           return;
         }
@@ -118,7 +118,7 @@
         });
 
         if (futureEvents.length === 0) {
-          document.getElementById("events-table").innerText = "Keine kommenden Events.";
+          document.getElementById("events-table").innerText = "No upcoming events.";
           sendHeightToParent();
           return;
         }
@@ -176,8 +176,8 @@
         sendHeightToParent();
       })
       .catch(err => {
-        console.error("Fehler beim Laden der Events:", err);
-        document.getElementById("events-table").innerText = "Fehler beim Laden der Events.";
+        console.error("Error loading events:", err);
+        document.getElementById("events-table").innerText = "Error loading events.";
         sendHeightToParent();
       });
 
