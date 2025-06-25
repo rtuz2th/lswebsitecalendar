@@ -8,12 +8,15 @@ export default async function handler(req, res) {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
 
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+
     const events = Object.values(data)
       .filter(e => e.type === 'VEVENT')
       .filter(e => {
         const eventDate = new Date(e.start);
         eventDate.setHours(0, 0, 0, 0);
-        return eventDate >= now;
+        return eventDate >= yesterday;
       })
       .map(e => {
         const description = e.description || '';
@@ -28,10 +31,10 @@ export default async function handler(req, res) {
 
         lines.forEach(line => {
           const clean = line.trim();
-          if (/^typ:/i.test(clean)) {
-            type = clean.replace(/^typ:/i, '').trim();
-          } else if (/^tickets?:/i.test(clean)) {
-            ticket = clean.replace(/^tickets?:/i, '').trim();
+          if (/^(typ|type):/i.test(clean)) {
+            type = clean.replace(/^(typ|type):/i, '').trim();
+          } else if (/^t[ai]ckets?:/i.test(clean)) {
+            ticket = clean.replace(/^t[ai]ckets?:/i, '').trim();
           } else if (/^location:/i.test(clean)) {
             location = clean.replace(/^location:/i, '').trim();
           }
