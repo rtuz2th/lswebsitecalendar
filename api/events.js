@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     const data = await ical.async.fromURL(url);
 
     const now = new Date();
-    now.setHours(0, 0, 0, 0); // Vergleich ab heute, unabhängig von Uhrzeit
+    now.setHours(0, 0, 0, 0);
 
     const events = Object.values(data)
       .filter(e => e.type === 'VEVENT')
@@ -24,17 +24,14 @@ export default async function handler(req, res) {
         const ticketRaw = ticketMatch ? ticketMatch[1].trim() : '';
         const isLink = /^https?:\/\//i.test(ticketRaw);
 
-        const ticket = ticketRaw || 'Nur Abendkasse';
-        const ticketUrl = isLink ? ticketRaw : '';
-
         return {
           title: e.summary || '',
           start: e.start,
-          description: description,
-          type: typeMatch ? typeMatch[1].trim() : '',
-          ticket,
-          ticketUrl,
-          location: locationMatch ? locationMatch[1].trim() : ''
+          description,
+          type: typeMatch ? typeMatch[1].trim() : '–',
+          ticket: ticketRaw || '–',
+          ticketUrl: isLink ? ticketRaw : '',
+          location: locationMatch ? locationMatch[1].trim() : '–'
         };
       });
 
