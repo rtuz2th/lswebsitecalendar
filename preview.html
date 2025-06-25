@@ -152,10 +152,12 @@
             }
           });
 
-          const validTicketUrl = encodeURI(decodeURI(ticket));
-          const ticketHTML = ticket
-            ? '<a href="' + validTicketUrl + '" target="_blank" rel="noopener">Tickets</a>'
-            : 'Nur Abendkasse';
+          let ticketHTML = "Nur Abendkasse";
+          if (ticket && /^https?:\/\//i.test(ticket)) {
+            ticketHTML = '<a href="' + ticket + '" target="_blank" rel="noopener">Tickets</a>';
+          } else if (ticket && ticket.trim() !== "") {
+            ticketHTML = ticket;
+          }
 
           const row = document.createElement("tr");
           row.innerHTML = `
