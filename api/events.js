@@ -17,21 +17,33 @@ export default async function handler(req, res) {
       })
       .map(e => {
         const description = e.description || '';
-        const typeMatch = description.match(/Typ:\s*(.*)/i);
-        const ticketMatch = description.match(/Ticket:\s*(.*)/i);
-        const locationMatch = description.match(/Location:\s*(.*)/i);
+        const lines = description.split(/<br\s*\/?>/i);
 
-        const ticketRaw = ticketMatch ? ticketMatch[1].trim() : '';
-        const isLink = /^https?:\/\//i.test(ticketRaw);
+        let type = '';
+        let ticket = '';
+        let location = '';
+
+        lines.forEach(line => {
+          const clean = line.trim();
+          if (/^typ:/i.test(clean)) {
+            type = clean.replace(/^typ:/i, '').trim();
+          } else if (/^ticket:/i.test(clean)) {
+            ticket = clean.replace(/^ticket:/i, '').trim().replace(/<.*?>/g, ''); // Entfernt HTML
+          } else if (/^location:/i.test(clean)) {
+            location = clean.replace(/^location:/i, '').trim();
+          }
+        });
+
+        const isLink = /^https?:\/\//i.test(ticket);
 
         return {
           title: e.summary || '',
           start: e.start,
           description,
-          type: typeMatch ? typeMatch[1].trim() : '–',
-          ticket: ticketRaw || '–',
-          ticketUrl: isLink ? ticketRaw : '',
-          location: locationMatch ? locationMatch[1].trim() : '–'
+          type: type || '–',
+          ticket: ticket || '–',
+          ticketUrl: isLink ? ticket : '',
+          location: location || '–'
         };
       });
 
