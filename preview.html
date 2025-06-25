@@ -137,14 +137,15 @@
 
         futureEvents.forEach(e => {
           const type = e.type || '–';
-          const ticket = e.ticket || '–';
+          const ticketText = e.ticket || '–';
+          const ticketUrl = e.ticketUrl || '';
           const location = e.location || '–';
 
           let ticketHTML = "Nur Abendkasse";
-          if (ticket && /^https?:\/\//i.test(ticket)) {
-            ticketHTML = '<a href="' + ticket + '" target="_blank" rel="noopener">Tickets</a>';
-          } else if (ticket.trim() !== '' && ticket !== '–') {
-            ticketHTML = ticket;
+          if (ticketUrl) {
+            ticketHTML = '<a href="' + ticketUrl + '" target="_blank" rel="noopener">Tickets</a>';
+          } else if (ticketText.trim() !== '' && ticketText !== '–') {
+            ticketHTML = ticketText;
           } else {
             ticketHTML = '–';
           }
