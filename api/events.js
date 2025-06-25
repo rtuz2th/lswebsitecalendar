@@ -6,17 +6,14 @@ export default async function handler(req, res) {
     const data = await ical.async.fromURL(url);
 
     const now = new Date();
-    now.setHours(0, 0, 0, 0);
-
-    const yesterday = new Date(now);
-    yesterday.setDate(yesterday.getDate() - 1);
+    now.setHours(0, 0, 0, 0); // Beginn des heutigen Tages
 
     const events = Object.values(data)
       .filter(e => e.type === 'VEVENT')
       .filter(e => {
         const eventDate = new Date(e.start);
         eventDate.setHours(0, 0, 0, 0);
-        return eventDate >= yesterday;
+        return eventDate >= now; // ⬅️ Nur heute und später
       })
       .map(e => {
         const description = e.description || '';
