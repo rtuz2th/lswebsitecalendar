@@ -9,43 +9,35 @@
     html, body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
       font-family: 'Montserrat', sans-serif;
       background: transparent;
       color: #e2cb8c;
       font-size: 1rem;
-      line-height: 1.6;
-      text-align: center;
+      line-height: 1.5;
       overflow-x: hidden;
-      width: 100%;
-    }
-
-    *, *::before, *::after {
-      box-sizing: inherit;
+      text-align: center;
     }
 
     .container {
-      max-width: 95vw;
+      max-width: 1140px;
       margin: 0 auto;
-      padding: 0 0.25rem;
+      padding: 0 1rem;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 1rem;
-      table-layout: fixed;
+      table-layout: auto;
     }
 
     th, td {
-      padding: 0.6rem 0.4rem;
+      padding: 0.75rem;
       font-weight: 300;
-      font-size: 0.95rem;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       text-align: left;
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     th {
@@ -55,7 +47,7 @@
     }
 
     tr:hover {
-      background-color: rgba(255,255,255,0.05);
+      background-color: rgba(255, 255, 255, 0.05);
     }
 
     a {
@@ -63,24 +55,18 @@
       text-decoration: underline;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
       html, body {
-        font-size: 0.75rem;
+        font-size: 0.95rem;
       }
 
       th, td {
-        padding: 0.4rem 0.3rem;
-        font-size: 0.75rem;
-      }
-
-      th, td {
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
+        padding: 0.5rem;
+        font-size: 0.95rem;
       }
 
       .container {
-        padding: 0 0.2rem;
+        padding: 0 0.5rem;
       }
     }
   </style>
@@ -111,7 +97,7 @@
         const futureEvents = events.filter(e => {
           const eventDate = new Date(e.start);
           eventDate.setHours(0, 0, 0, 0);
-          return eventDate >= today || eventDate.getTime() === today.getTime() - 86400000;
+          return eventDate >= today;
         });
 
         if (futureEvents.length === 0) {
